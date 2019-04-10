@@ -14,11 +14,19 @@ export default class PopupDialogComponent extends React.Component {
         }
     }
     showDialogComponentForAdd = () => {
-        ;
         this.setState({
             dialogTitle: 'Add a new Todo List',
             name: '',
             isAddNew: true,
+            visible: true
+        })
+    }
+    showDialogComponentForUpdate = (existingTodoList) => {
+        this.setState({
+            dialogTitle: 'Update Todo List',
+            name: existingTodoList.name,
+            id: existingTodoList.id,
+            isAddNew: false,
             visible: true
         })
     }
@@ -27,8 +35,8 @@ export default class PopupDialogComponent extends React.Component {
         return (
             <Dialog
                 dialogTitle={<DialogTitle title={dialogTitle} />}
-                width={0.7} height={180} visible= {this.state.visible}
-                ref = {'popupDialog'}>
+                width={0.7} height={180} visible={this.state.visible}
+                ref={'popupDialog'}>
                 <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     <TextInput
                         style={{ height: 40, padding: 10, margin: 10, borderColor: 'gray', borderWidth: 1 }}
@@ -43,7 +51,7 @@ export default class PopupDialogComponent extends React.Component {
                                 alert('Please enter your todo name');
                                 return;
                             } else {
-                                this.setState({visible:false});
+                                this.setState({ visible: false });
                                 if (this.state.isAddNew == true) {
                                     const newTodoList = {
                                         id: Math.floor(Date.now() / 1000),
@@ -51,16 +59,23 @@ export default class PopupDialogComponent extends React.Component {
                                         creationDate: new Date(),
                                     };
                                     insertNewTodoList(newTodoList)
-                                        .then(()=>console.log(newTodoList))
+                                        .then(() => console.log(newTodoList))
                                         .catch(error => alert(`Insert fail ${error}`));
                                 } else {
-
+                                    const TodoListUpdeted = {
+                                        id: this.state.id,
+                                        name: this.state.name,
+                                        creationDate: new Date(),
+                                    };
+                                    updateTodoList(TodoListUpdeted)
+                                        .then()
+                                        .catch(err => alert(`Update fail ${err}`));
                                 }
                             }
                         }} style={{ backgroundColor: 'steelblue', margin: 10, padding: 10 }}>
                             <Text style={{ color: 'white', fontSize: 18 }}>Save</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.setState({visible: false}) } style={{ backgroundColor: 'steelblue', margin: 10, padding: 10 }}>
+                        <TouchableOpacity onPress={() => this.setState({ visible: false })} style={{ backgroundColor: 'steelblue', margin: 10, padding: 10 }}>
                             <Text style={{ color: 'white', fontSize: 18 }}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
